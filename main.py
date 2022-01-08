@@ -1,11 +1,10 @@
-
 from tkinter import *
-
 from view import Application
 
 if __name__ == '__main__':
     root = Tk()
     app = Application(master=root)
+    root.protocol("WM_DELETE_WINDOW", app.on_closing)
     app.mainloop()
 
 # Idea: Ping Chart
