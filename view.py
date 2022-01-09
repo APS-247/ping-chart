@@ -8,7 +8,8 @@ class Application(Frame):
     canvas = ""
     background_color = 'black'
     foreground_color = 'green'
-    delay = int((1 / 24) * 1000) # MS, set to 24 Frames per second
+    fps = 5 # How many times we're going to redraw the graph a second
+    delay = int((1 / fps) * 1000) # MS
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -24,7 +25,7 @@ class Application(Frame):
         self.ax = self.fig.add_subplot()
         self.ax.set_ylim(0, self.PP.max_ping_axis)
         self.ax.set_xlim(0, self.PP.max_ping_results)
-        self.axes_artist = self.ax.plot(self.PP.ping_results)
+        self.ax.plot(self.PP.ping_results)
         master.title('Ping Graph')
 
         # The TkInter canvas to contain the matplotlib figure
@@ -35,13 +36,16 @@ class Application(Frame):
         self.canvas.get_tk_widget().pack()
 
         # Starts the update loop for actually updating the graph over time
-        self.after(self.delay, self.update_graph)
+        self.after(self.delay, self.update_graph, True)
 
-    def update_graph(self):
-        self.axes_arti
-        self.axes_artist = self.ax.plot(self.PP.ping_results)
+    def update_graph(self, recurse=False):
+        self.ax.clear()
+        self.ax.set_ylim(0, self.PP.max_ping_axis)
+        self.ax.set_xlim(0, self.PP.max_ping_results)
+        self.ax.plot(self.PP.ping_results)
         self.canvas.draw()
-        self.after(self.delay, self.update_graph)
+        if recurse:
+            self.after(self.delay, self.update_graph, True)
 
     def on_closing(self):
         self.PP.stop_pinging()
